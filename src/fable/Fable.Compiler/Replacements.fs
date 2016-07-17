@@ -300,7 +300,7 @@ module private AstPass =
         | "areEqual" ->
             ImportCall("assert", "default", Some "equal", false, i.args)
             |> makeCall com i.range i.returnType |> Some
-        | "awaitPromise" | "startAsPromise" ->
+        | "awaitTask" | "startAsTask" ->
             CoreLibCall("Async", Some i.methodName, false, deleg i i.args)
             |> makeCall com i.range i.returnType |> Some
         | "toJson" | "ofJson" ->

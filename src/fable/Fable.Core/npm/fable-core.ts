@@ -2122,8 +2122,7 @@ export class Async {
 
   // --- Async methods
 
-  // Async.AwaitTask<T> in F#
-  static awaitPromise<T>(p: Promise<T>) {
+  static awaitTask<T>(p: Promise<T>) {
     return Async.fromContinuations((conts: Array<Continuation<T>>) =>
       p.then(conts[0]).catch(err =>
         (err == "cancelled" ? conts[2] : conts[1])(err)));
@@ -2157,7 +2156,7 @@ export class Async {
   }
 
   static parallel<T>(computations: Iterable<IAsync<T>>) {
-    return Async.awaitPromise(Promise.all(Seq.map(w => Async.startAsPromise(w), computations)));
+    return Async.awaitTask(Promise.all(Seq.map(w => Async.startAsTask(w), computations)));
   }
 
   static sleep(millisecondsDueTime: number) {
@@ -2192,8 +2191,7 @@ export class Async {
     });
   }
 
-  // Async.StartAsTask<T> in F#
-  static startAsPromise<T>(computation: IAsync<T>, cancellationToken?: CancellationToken) {
+  static startAsTask<T>(computation: IAsync<T>, taskCreationOptions?: any, cancellationToken?: CancellationToken) {
     return new Promise((resolve: Continuation<T>, reject: Continuation<any>) =>
       Async.startWithContinuations(computation, resolve, reject, reject, cancellationToken ? cancellationToken : Async.defaultCancellationToken));
   }

@@ -200,13 +200,8 @@ open Fable.Core
 let ``Interaction between Async and Promise works``() =
     let res = ref false
     async { res := true }
-    #if MOCHA
-    |> Async.StartAsPromise
-    |> Async.AwaitPromise
-    #else
     |> Async.StartAsTask
     |> Async.AwaitTask
-    #endif
     |> Async.StartImmediate
     equal true !res
     
@@ -220,11 +215,7 @@ let ``Promises can be cancelled``() =
                 do! Async.Sleep 75
                 res := -1
             }
-            #if MOCHA
-            Async.StartAsPromise(work, tcs.Token) |> Async.AwaitPromise
-            #else
             Async.StartAsTask(work, cancellationToken=tcs.Token) |> Async.AwaitTask
-            #endif
         Async.StartWithContinuations(work, ignore, ignore, (fun _ -> res := 1))
         do! Async.Sleep 100
         equal 1 !res
